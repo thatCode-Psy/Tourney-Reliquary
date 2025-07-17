@@ -2,9 +2,11 @@ package com.tourneyofthereliquary.tourneyrestendpoint.services;
 
 
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -16,6 +18,7 @@ import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.stereotype.Service;
 
 import com.tourneyofthereliquary.tourneyrestendpoint.models.Player;
+import com.tourneyofthereliquary.tourneyrestendpoint.models.Round;
 import com.tourneyofthereliquary.tourneyrestendpoint.models.Tournament;
 import com.tourneyofthereliquary.tourneyrestendpoint.models.Match;
 import com.tourneyofthereliquary.tourneyrestendpoint.repositories.ITournamentRepository;
@@ -34,7 +37,7 @@ public class TournamentService implements ITournamentService{
 
     @Override
     public Mono<Tournament> createNewTournament(String name) { 
-        return tournamentRepository.save(new Tournament(UUID.randomUUID().toString(), name, new TreeSet<Player>(), new LinkedList<Set<Match>>()));
+        return tournamentRepository.save(new Tournament(UUID.randomUUID().toString(), name, new TreeSet<Player>(), new LinkedList<Round>()));
     }
 
     @Override
@@ -49,20 +52,14 @@ public class TournamentService implements ITournamentService{
     }
 
     @Override
-    public Mono<Tournament> generatePairings(String key) {
+    public Mono<Tournament> generatePairingsForCurrentRound(String key) {
         return tournamentRepository.findByKey(key)
             .flatMap(tournament -> 
                 {   
-                    tournament.getMatchHistory().add(swissPairPlayers(tournament.getPlayers()));
+                    Round currentRound = tournament.getRounds().get(tournament.getRoundNumber());
+                    currentRound.getMatches().addAll(currentRound.getPairingMode().getPairingsMode().generatePairings(tournament.getPlayers(), 0));
                     return tournamentRepository.save(tournament);
                 });
-    }
-
-    private Set<Match> swissPairPlayers(SortedSet<Player> players){
-        HashSet<Match> matches = new HashSet<>();
-
-        
-        return matches;
     }
     
 }

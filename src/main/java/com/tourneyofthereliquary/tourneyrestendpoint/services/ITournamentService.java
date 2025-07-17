@@ -11,4 +11,6 @@ public interface ITournamentService {
         Mono<Tournament> updateTournament(String key, Tournament tournament);
 
         Mono<Tournament> findTournamentByKey(String key);
+
+        public Mono<Tournament> generatePairingsForCurrentRound(String tournamentKey);
 }

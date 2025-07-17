@@ -9,8 +9,9 @@ import org.springframework.lang.NonNull;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Value;
 
-@Data
+@Value
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @RedisHash
 public class Player implements Comparable<Player>{
@@ -27,6 +28,7 @@ public class Player implements Comparable<Player>{
     PlayerRecord record;
 
     @Reference
+    @NonNull
     Set<Player> previousOpponents;
 
     @Override

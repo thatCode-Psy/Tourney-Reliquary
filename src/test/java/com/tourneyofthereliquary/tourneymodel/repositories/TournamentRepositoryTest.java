@@ -2,6 +2,7 @@ package com.tourneyofthereliquary.tourneymodel.repositories;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.SortedSet;
@@ -29,6 +30,7 @@ import com.tourneyofthereliquary.tourneyrestendpoint.RestEndpointApplication;
 import com.tourneyofthereliquary.tourneyrestendpoint.configurations.RedisConfiguration;
 import com.tourneyofthereliquary.tourneyrestendpoint.models.Match;
 import com.tourneyofthereliquary.tourneyrestendpoint.models.Player;
+import com.tourneyofthereliquary.tourneyrestendpoint.models.Round;
 import com.tourneyofthereliquary.tourneyrestendpoint.models.MagicPlayerRecord;
 import com.tourneyofthereliquary.tourneyrestendpoint.models.Tournament;
 import com.tourneyofthereliquary.tourneyrestendpoint.repositories.TournamentRepository;
@@ -49,7 +51,7 @@ public class TournamentRepositoryTest {
 
     @BeforeEach
     public void setup() {
-        tournament = new Tournament("1", "test", new TreeSet<Player>(), new LinkedList<Set<Match>>());
+        tournament = new Tournament("1", "test", new TreeSet<Player>(), new LinkedList<Round>());
     }
 
     @Test
@@ -68,7 +70,7 @@ public class TournamentRepositoryTest {
 
     @Test
     public void addPlayerLengthTest() {
-        Player player1 = new Player("player1", "testPlayer1", new MagicPlayerRecord());
+        Player player1 = new Player("player1", "testPlayer1", new MagicPlayerRecord(), new HashSet<Player>());
 
         StepVerifier.create(tournamentRepository.save(tournament)
                                                 .flatMap(_ -> tournamentRepository.addPlayerToTournament(tournament.getId(), player1)))
@@ -79,8 +81,8 @@ public class TournamentRepositoryTest {
 
     @Test
     public void addPlayerResultTest() {
-        Player player1 = new Player("player1", "testPlayer1", new MagicPlayerRecord());
-        Player player2 = new Player("player2", "testPlayer2", new MagicPlayerRecord());
+        Player player1 = new Player("player1", "testPlayer1", new MagicPlayerRecord(), new HashSet<Player>());
+        Player player2 = new Player("player2", "testPlayer2", new MagicPlayerRecord(), new HashSet<Player>());
         
         Mono<Tournament> source = tournamentRepository.save(tournament)
                                                 .flatMap(_ -> tournamentRepository.addPlayerToTournament(tournament.getId(), player1))
